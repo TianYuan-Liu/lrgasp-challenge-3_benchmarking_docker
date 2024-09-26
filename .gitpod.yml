@@ -1,0 +1,38 @@
+image:
+  init: |
+    # Update package list and install dependencies
+    sudo apt-get update
+    sudo apt-get install -y wget bzip2
+
+    # Download and install Miniconda
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+    bash miniconda.sh -b -p /home/gitpod/miniconda
+    rm miniconda.sh
+
+    # Initialize Conda
+    /home/gitpod/miniconda/bin/conda init bash
+
+    # Update Conda to the latest version
+    /home/gitpod/miniconda/bin/conda update -y conda
+
+# Configure the shell to use Conda by default
+# This ensures every new terminal has access to conda
+shell: bash -c "source /home/gitpod/miniconda/etc/profile.d/conda.sh && exec bash"
+
+tasks:
+  - init: |
+      # Activate Conda (needed for running conda commands)
+      source /home/gitpod/miniconda/etc/profile.d/conda.sh
+
+      # Check if the environment is already created, if not, create it
+      if ! conda env list | grep -q 'sqanti3_lrgasp'; then
+        conda env create -f sqanti3_lrgasp.yml
+      fi
+
+      # Activate the newly created environment
+      conda activate sqanti3_lrgasp
+
+  - command: |
+      # Ensure the Conda environment is activated in the terminal
+      source /home/gitpod/miniconda/etc/profile.d/conda.sh
+      conda activate sqanti3_lrgasp
