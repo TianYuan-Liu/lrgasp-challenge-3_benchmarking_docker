@@ -19,7 +19,7 @@ import math
 import numpy as np
 import pandas as pd
 from scipy import mean
-from collections import defaultdict, Counter, namedtuple
+from collections import defaultdict, namedtuple
 from collections.abc import Iterable
 from csv import DictWriter, DictReader
 from multiprocessing import Process
@@ -53,33 +53,16 @@ except ImportError:
     print("Unable to import BCBio! Please make sure bcbiogff is installed.", file=sys.stderr)
     sys.exit(-1)
 
-try:
-    from err_correct_w_genome import err_correct
-    from sam_to_gff3 import convert_sam_to_gff3
-    from STAR import STARJunctionReader
-    from BED import LazyBEDPointReader
-    import coordinate_mapper as cordmap
-except ImportError:
-    print(
-        "Unable to import err_correct_w_genome or sam_to_gff3.py! Please make sure cDNA_Cupcake/sequence/ is in $PYTHONPATH.")
-    sys.exit(-1)
+#try:
+from lrgasp_event2_metrics.utilities.cupcake.sequence.err_correct_w_genome import err_correct
+from lrgasp_event2_metrics.utilities.cupcake.sequence.sam_to_gff3 import convert_sam_to_gff3
+from lrgasp_event2_metrics.utilities.cupcake.sequence.STAR import STARJunctionReader
+from lrgasp_event2_metrics.utilities.cupcake.sequence.BED import LazyBEDPointReader
 
-try:
-    from cupcake.tofu.compare_junctions import compare_junctions
-    from cupcake.tofu.filter_away_subset import read_count_file
-    from cupcake.io.BioReaders import GMAPSAMReader
-    from cupcake.io.GFF import collapseGFFReader, write_collapseGFF_format
-except ImportError:
-    print("Unable to import cupcake.tofu! Please make sure you install cupcake.", file=sys.stderr)
-    sys.exit(-1)
 
-# check cupcake version
-import cupcake
+from lrgasp_event2_metrics.utilities.cupcake.tofu.compare_junctions import compare_junctions
+from lrgasp_event2_metrics.utilities.cupcake.io.GFF import collapseGFFReader, write_collapseGFF_format
 
-v1, v2 = [int(x) for x in cupcake.__version__.split('.')]
-if v1 < 8 or v2 < 6:
-    print("Cupcake version must be 8.6 or higher! Got {0} instead.".format(cupcake.__version__), file=sys.stderr)
-    sys.exit(-1)
 
 GMAP_CMD = "gmap --cross-species -n 1 --max-intronlength-middle=2000000 --max-intronlength-ends=2000000 -L 3000000 -f samse -t {cpus} -D {dir} -d {name} -z {sense} {i} | samtools view  -F2048 -h > {o}"
 # MINIMAP2_CMD = "minimap2 -ax splice --secondary=no -C5 -O6,24 -B4 -u{sense} -t {cpus} {g} {i} > {o}"

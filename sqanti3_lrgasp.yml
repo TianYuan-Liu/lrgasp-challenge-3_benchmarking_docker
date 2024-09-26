@@ -6,7 +6,6 @@ channels:
   - r
   - defaults
 dependencies:
-  - busco
   - cython
   - python=3.7
   - perl
@@ -24,9 +23,8 @@ dependencies:
   - r-kableextra
   - r-dplyr
   - r-data.table
-  - bioconductor-rsamtools
   - samtools
   - scipy
   - bx-python
   - jsonschema
-  - json
+  - json  # you can remove this or install via pip later if needed
